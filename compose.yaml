@@ -1,0 +1,14 @@
+services:
+
+  postgres:
+    image: postgres:latest
+
+    container_name: postgres_smartsalud
+
+    environment:
+      POSTGRES_DB: smartsalud
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+
+    ports:
+      - "5433:5432"

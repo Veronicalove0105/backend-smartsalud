@@ -51,7 +51,8 @@ public class PacienteService {
                         cita.getModalidad(),
                         cita.getMedico().getNombres() + " " + cita.getMedico().getApellidos(),
                         cita.getMedico().getEspecialidad().getNombre(),
-                        cita.getSede().getNombre()
+                        cita.getSede().getNombre(),
+                        paciente.getNombres() + " " + paciente.getApellidos()
                 ))
                 .collect(Collectors.toList());
     }

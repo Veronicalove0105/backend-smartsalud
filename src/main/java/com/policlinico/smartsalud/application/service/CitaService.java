@@ -29,6 +29,24 @@ public class CitaService {
         return repository.findByPacienteIdOrderByFechaDescHoraDesc(pacienteId);
     }
 
+    public List<CitaDTO> getTodas() {
+        return repository.findAll().stream()
+                .map(cita -> new CitaDTO(
+                        cita.getId(),
+                        cita.getCodigoReserva(),
+                        cita.getFecha(),
+                        cita.getHora(),
+                        cita.getEstado(),
+                        cita.getTipoConsulta(),
+                        cita.getModalidad(),
+                        cita.getMedico().getNombres() + " " + cita.getMedico().getApellidos(),
+                        cita.getMedico().getEspecialidad().getNombre(),
+                        cita.getSede().getNombre(),
+                        cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos()
+                ))
+                .collect(Collectors.toList());
+    }
+
     public List<HorarioMedicoDTO> getDisponibles(Integer medicoId, LocalDate fecha) {
         return horarioMedicoRepository.findByMedicoIdAndFecha(medicoId, fecha)
                 .stream()

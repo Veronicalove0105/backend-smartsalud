@@ -13,5 +13,6 @@ public record CitaDTO(
     String modalidad,
     String medicoNombre,
     String especialidadNombre,
-    String sedeNombre
+    String sedeNombre,
+    String pacienteNombre
 ) {}

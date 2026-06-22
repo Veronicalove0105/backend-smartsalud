@@ -71,9 +71,10 @@ public class MedicoService {
                         cita.getEstado(),
                         cita.getTipoConsulta(),
                         cita.getModalidad(),
-                        cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos(),
+                        medico.getNombres() + " " + medico.getApellidos(),
                         medico.getEspecialidad().getNombre(),
-                        cita.getSede().getNombre()
+                        cita.getSede().getNombre(),
+                        cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos()
                 ))
                 .collect(Collectors.toList());
     }

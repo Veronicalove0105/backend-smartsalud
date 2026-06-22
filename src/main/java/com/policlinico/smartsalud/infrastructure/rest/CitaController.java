@@ -26,6 +26,11 @@ public class CitaController {
         return ResponseEntity.ok(citaService.getDisponibles(medicoId, fecha));
     }
 
+    @GetMapping("/admin/todas")
+    public ResponseEntity<List<com.policlinico.smartsalud.application.dto.CitaDTO>> getTodas() {
+        return ResponseEntity.ok(citaService.getTodas());
+    }
+
     @PostMapping("/reservar")
     public ResponseEntity<String> reservar(@RequestBody ReservaRequest request, Authentication authentication) {
         String codigoReserva = citaService.reservar(authentication.getName(), request);

@@ -115,6 +115,9 @@ public class AuthService {
         if (pacienteRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
+        if (pacienteRepository.existsByDni(request.getDni())) {
+            throw new IllegalArgumentException("El DNI ya está registrado");
+        }
 
         Paciente paciente = new Paciente();
         paciente.setNombres(request.getNombres());

@@ -59,6 +59,14 @@ public class CitaService {
     }
 
     @Transactional
+    public void actualizarEstado(Integer id, String estado) {
+        Cita cita = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada"));
+        cita.setEstado(estado);
+        repository.save(cita);
+    }
+
+    @Transactional
     public String reservar(String emailPaciente, ReservaRequest request) {
         Paciente paciente = pacienteRepository.findByEmail(emailPaciente)
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));

@@ -31,6 +31,12 @@ public class CitaController {
         return ResponseEntity.ok(citaService.getTodas());
     }
 
+    @PutMapping("/admin/{id}/estado")
+    public ResponseEntity<Void> actualizarEstado(@PathVariable Integer id, @RequestParam String estado) {
+        citaService.actualizarEstado(id, estado);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/reservar")
     public ResponseEntity<String> reservar(@RequestBody ReservaRequest request, Authentication authentication) {
         String codigoReserva = citaService.reservar(authentication.getName(), request);

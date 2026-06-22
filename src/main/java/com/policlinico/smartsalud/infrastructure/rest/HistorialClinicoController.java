@@ -20,4 +20,10 @@ public class HistorialClinicoController {
         service.registrarAtencion(request, authentication.getName());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/cita/{citaId}")
+    public ResponseEntity<com.policlinico.smartsalud.application.dto.HistorialClinicoDTO> getHistorialPorCita(
+            @PathVariable Integer citaId, Authentication authentication) {
+        return ResponseEntity.ok(service.getHistorialPorCita(citaId, authentication.getName()));
+    }
 }

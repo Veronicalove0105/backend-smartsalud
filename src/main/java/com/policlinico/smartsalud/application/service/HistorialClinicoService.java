@@ -44,4 +44,30 @@ public class HistorialClinicoService {
         cita.setEstado("ATENDIDO");
         citaRepository.save(cita);
     }
+
+    public com.policlinico.smartsalud.application.dto.HistorialClinicoDTO getHistorialPorCita(Integer citaId, String emailUser) {
+        java.util.List<HistorialClinico> lista = historialRepository.findByCitaId(citaId);
+        if (lista.isEmpty()) {
+            throw new IllegalArgumentException("No hay documento clínico para esta cita");
+        }
+        HistorialClinico h = lista.get(0);
+        
+        // Verifica que el usuario que lo pide es el médico o el paciente
+        if (!h.getMedico().getEmail().equals(emailUser) && !h.getPaciente().getEmail().equals(emailUser)) {
+            throw new IllegalArgumentException("No tienes permiso para ver este documento");
+        }
+
+        return new com.policlinico.smartsalud.application.dto.HistorialClinicoDTO(
+            h.getId(),
+            h.getDiagnostico(),
+            h.getTratamiento(),
+            h.getObservaciones(),
+            h.getFecha(),
+            h.getCreadoEn(),
+            h.getMedico().getNombres() + " " + h.getMedico().getApellidos(),
+            h.getMedico().getEspecialidad().getNombre(),
+            h.getPaciente().getNombres() + " " + h.getPaciente().getApellidos(),
+            h.getPaciente().getDni()
+        );
+    }
 }

@@ -55,6 +55,9 @@ public class Medico {
     @Column(name = "fecha_ingreso", nullable = false)
     private LocalDate fechaIngreso = LocalDate.now();
 
+    @Column(name = "password_hash")
+    private String passwordHash;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "medico_sede",

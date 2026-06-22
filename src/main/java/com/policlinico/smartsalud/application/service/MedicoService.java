@@ -83,32 +83,11 @@ public class MedicoService {
         if (request.password() == null || request.password().trim().isEmpty()) {
             throw new IllegalArgumentException("La contraseña es obligatoria para nuevos médicos");
         }
-        if (pacienteRepository.existsByEmail(request.email())) {
+        if (repository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        // 1. Create Login Account in Paciente
-        Paciente paciente = new Paciente();
-        paciente.setNombres(request.nombres());
-        paciente.setApellidos(request.apellidos());
-        paciente.setEmail(request.email());
-        paciente.setPasswordHash(passwordEncoder.encode(request.password()));
-        paciente.setDni(request.dni());
-        paciente.setTelefono(request.telefono());
-        paciente.setActivo(true);
-        paciente.setFechaRegistro(LocalDateTime.now());
-        paciente = pacienteRepository.save(paciente);
-
-        // 2. Assign MEDICO role to the login account
-        Rol rol = rolRepository.findByNombre("MEDICO")
-                .orElseThrow(() -> new IllegalArgumentException("Rol MEDICO no encontrado"));
-        UsuarioRol usuarioRol = new UsuarioRol();
-        usuarioRol.setEntidad("PACIENTE");
-        usuarioRol.setEntidadId(paciente.getId());
-        usuarioRol.setRol(rol);
-        usuarioRolRepository.save(usuarioRol);
-
-        // 3. Create Medico profile
+        // Create Medico profile
         Medico medico = new Medico();
         medico.setDni(request.dni());
         medico.setNombres(request.nombres());
@@ -116,6 +95,7 @@ public class MedicoService {
         medico.setCmp(request.cmp());
         medico.setEmail(request.email());
         medico.setTelefono(request.telefono());
+        medico.setPasswordHash(passwordEncoder.encode(request.password()));
         medico.setAniosExperiencia(request.aniosExperiencia() != null ? request.aniosExperiencia() : 0);
         medico.setEspecialidad(especialidadRepository.findById(request.especialidadId()).orElseThrow());
         medico.setActivo(true);
@@ -140,19 +120,12 @@ public class MedicoService {
         Medico m = repository.findById(id).orElseThrow();
         m.setActivo(false);
         repository.save(m);
-        // Also deactivate their login account
-        pacienteRepository.findByEmail(m.getEmail()).ifPresent(p -> {
-            p.setActivo(false);
-            pacienteRepository.save(p);
-        });
     }
 
     @Transactional
     public MedicoDTO updateMedico(Integer id, MedicoRequest request) {
         Medico medico = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
-
-        String oldEmail = medico.getEmail();
 
         medico.setNombres(request.nombres());
         medico.setApellidos(request.apellidos());
@@ -163,20 +136,11 @@ public class MedicoService {
         medico.setAniosExperiencia(request.aniosExperiencia() != null ? request.aniosExperiencia() : 0);
         medico.setEspecialidad(especialidadRepository.findById(request.especialidadId()).orElseThrow());
         
-        medico = repository.save(medico);
+        if (request.password() != null && !request.password().trim().isEmpty()) {
+            medico.setPasswordHash(passwordEncoder.encode(request.password()));
+        }
 
-        // Update login account
-        pacienteRepository.findByEmail(oldEmail).ifPresent(p -> {
-            p.setNombres(request.nombres());
-            p.setApellidos(request.apellidos());
-            p.setEmail(request.email());
-            p.setDni(request.dni());
-            p.setTelefono(request.telefono());
-            if (request.password() != null && !request.password().trim().isEmpty()) {
-                p.setPasswordHash(passwordEncoder.encode(request.password()));
-            }
-            pacienteRepository.save(p);
-        });
+        medico = repository.save(medico);
 
         return new MedicoDTO(
             medico.getId(), medico.getNombres(), medico.getApellidos(), medico.getCmp(), 

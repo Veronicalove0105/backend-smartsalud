@@ -5,7 +5,9 @@ import com.policlinico.smartsalud.application.dto.LoginRequest;
 import com.policlinico.smartsalud.application.dto.RegisterRequest;
 import com.policlinico.smartsalud.application.dto.PerfilDTO;
 import com.policlinico.smartsalud.domain.entity.Paciente;
+import com.policlinico.smartsalud.domain.entity.Medico;
 import com.policlinico.smartsalud.domain.repository.PacienteRepository;
+import com.policlinico.smartsalud.domain.repository.MedicoRepository;
 import com.policlinico.smartsalud.infrastructure.config.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final PacienteRepository pacienteRepository;
+    private final MedicoRepository medicoRepository;
     private final PasswordEncoder passwordEncoder;
 
     public JwtResponse login(LoginRequest request) {
@@ -35,7 +39,22 @@ public class AuthService {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String token = jwtUtil.generateToken(userDetails);
         
-        Paciente paciente = pacienteRepository.findByEmail(request.getEmail()).orElseThrow();
+        Integer userId;
+        String userName;
+
+        Optional<Paciente> pacienteOpt = pacienteRepository.findByEmail(request.getEmail());
+        if (pacienteOpt.isPresent()) {
+            userId = pacienteOpt.get().getId();
+            userName = pacienteOpt.get().getNombres() + " " + pacienteOpt.get().getApellidos();
+        } else {
+            Optional<Medico> medicoOpt = medicoRepository.findByEmail(request.getEmail());
+            if (medicoOpt.isPresent()) {
+                userId = medicoOpt.get().getId();
+                userName = "Dr. " + medicoOpt.get().getNombres() + " " + medicoOpt.get().getApellidos();
+            } else {
+                throw new IllegalArgumentException("Usuario no encontrado en la base de datos");
+            }
+        }
 
         String role = userDetails.getAuthorities().stream()
                 .map(auth -> auth.getAuthority())
@@ -55,9 +74,9 @@ public class AuthService {
         return JwtResponse.builder()
                 .token(token)
                 .type("Bearer")
-                .id(paciente.getId())
-                .email(paciente.getEmail())
-                .nombre(paciente.getNombres() + " " + paciente.getApellidos())
+                .id(userId)
+                .email(request.getEmail())
+                .nombre(userName)
                 .role(frontendRole)
                 .build();
     }

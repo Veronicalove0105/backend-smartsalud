@@ -1,6 +1,7 @@
 package com.policlinico.smartsalud.application.service;
 
 import com.policlinico.smartsalud.application.dto.ReservaRequest;
+import com.policlinico.smartsalud.application.dto.CitaDTO;
 import com.policlinico.smartsalud.application.dto.HorarioMedicoDTO;
 import com.policlinico.smartsalud.domain.entity.*;
 import com.policlinico.smartsalud.domain.repository.*;

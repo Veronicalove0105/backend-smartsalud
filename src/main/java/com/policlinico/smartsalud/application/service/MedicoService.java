@@ -61,7 +61,7 @@ public class MedicoService {
         Medico medico = repository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
 
-        return citaRepository.findByMedicoIdAndFechaOrderByHoraAsc(medico.getId(), LocalDate.now())
+        return citaRepository.findByMedicoIdOrderByFechaAscHoraAsc(medico.getId())
                 .stream()
                 .map(cita -> new CitaDTO(
                         cita.getId(),

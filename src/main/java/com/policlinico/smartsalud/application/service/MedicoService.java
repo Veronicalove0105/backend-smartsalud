@@ -79,6 +79,28 @@ public class MedicoService {
                 .collect(Collectors.toList());
     }
 
+    public List<CitaDTO> getHistorialCitas(String email) {
+        Medico medico = repository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
+
+        return citaRepository.findByMedicoIdOrderByFechaDescHoraDesc(medico.getId())
+                .stream()
+                .map(cita -> new CitaDTO(
+                        cita.getId(),
+                        cita.getCodigoReserva(),
+                        cita.getFecha(),
+                        cita.getHora(),
+                        cita.getEstado(),
+                        cita.getTipoConsulta(),
+                        cita.getModalidad(),
+                        medico.getNombres() + " " + medico.getApellidos(),
+                        medico.getEspecialidad().getNombre(),
+                        cita.getSede().getNombre(),
+                        cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos()
+                ))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public MedicoDTO createMedico(MedicoRequest request) {
         if (request.password() == null || request.password().trim().isEmpty()) {

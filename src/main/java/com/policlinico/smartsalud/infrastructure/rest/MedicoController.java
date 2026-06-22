@@ -57,6 +57,11 @@ public class MedicoController {
         return ResponseEntity.ok(service.getPacientesDeHoy(authentication.getName()));
     }
 
+    @GetMapping("/citas")
+    public ResponseEntity<List<CitaDTO>> getHistorialCitas(Authentication authentication) {
+        return ResponseEntity.ok(service.getHistorialCitas(authentication.getName()));
+    }
+
     @PostMapping
     public ResponseEntity<MedicoDTO> createMedico(@Valid @RequestBody MedicoRequest request) {
         return ResponseEntity.ok(service.createMedico(request));

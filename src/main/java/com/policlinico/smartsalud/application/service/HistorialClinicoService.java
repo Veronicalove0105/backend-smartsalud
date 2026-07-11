@@ -5,6 +5,7 @@ import com.policlinico.smartsalud.domain.entity.Cita;
 import com.policlinico.smartsalud.domain.entity.HistorialClinico;
 import com.policlinico.smartsalud.domain.repository.CitaRepository;
 import com.policlinico.smartsalud.domain.repository.HistorialClinicoRepository;
+import com.policlinico.smartsalud.domain.repository.RecetaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ public class HistorialClinicoService {
 
     private final HistorialClinicoRepository historialRepository;
     private final CitaRepository citaRepository;
+    private final RecetaRepository recetaRepository;
+
 
     @Transactional
     public void registrarAtencion(HistorialClinicoRequest request, String emailMedico) {
@@ -40,6 +43,24 @@ public class HistorialClinicoService {
         historial.setCreadoEn(LocalDateTime.now());
 
         historialRepository.save(historial);
+        
+        if (request.recetas() != null && !request.recetas().isEmpty()) {
+            for (com.policlinico.smartsalud.application.dto.RecetaDTO dto : request.recetas()) {
+                com.policlinico.smartsalud.domain.entity.Receta receta = new com.policlinico.smartsalud.domain.entity.Receta();
+                receta.setCita(cita);
+                receta.setPaciente(cita.getPaciente());
+                receta.setMedico(cita.getMedico());
+                receta.setMedicamentoNombre(dto.medicamentoNombre());
+                receta.setDuracion(dto.duracion());
+                receta.setInstrucciones(dto.instrucciones());
+                receta.setNotas(dto.notas());
+                receta.setManana(dto.manana() != null ? dto.manana() : false);
+                receta.setTarde(dto.tarde() != null ? dto.tarde() : false);
+                receta.setNoche(dto.noche() != null ? dto.noche() : false);
+                receta.setFechaEmision(LocalDateTime.now());
+                recetaRepository.save(receta);
+            }
+        }
 
         cita.setEstado("ATENDIDO");
         citaRepository.save(cita);

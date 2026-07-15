@@ -52,7 +52,14 @@ public class MedicoService {
         return horarioMedicoRepository.findByMedicoIdAndFechaGreaterThanEqualOrderByFechaAsc(medico.getId(), LocalDate.now())
                 .stream()
                 .map(h -> new HorarioMedicoDTO(
-                        h.getId(), h.getFecha(), h.getHoraInicio(), h.getHoraFin(), h.getDisponible()
+                        h.getId(), h.getFecha(), h.getHoraInicio(), h.getHoraFin(), h.getDisponible(),
+                        h.getMedico().getId(),
+                        h.getMedico().getNombres() + " " + h.getMedico().getApellidos(),
+                        h.getSede().getId(),
+                        h.getSede().getNombre(),
+                        h.getSala() != null ? h.getSala().getId() : null,
+                        h.getSala() != null ? h.getSala().getNombre() : null,
+                        h.getDuracionSlot()
                 ))
                 .collect(Collectors.toList());
     }

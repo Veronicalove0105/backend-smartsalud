@@ -8,5 +8,12 @@ public record HorarioMedicoDTO(
     LocalDate fecha,
     LocalTime horaInicio,
     LocalTime horaFin,
-    Boolean disponible
+    Boolean disponible,
+    Integer medicoId,
+    String medicoNombre,
+    Integer sedeId,
+    String sedeNombre,
+    Integer salaId,
+    String salaNombre,
+    Short duracionSlot
 ) {}

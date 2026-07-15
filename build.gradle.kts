@@ -42,6 +42,10 @@ dependencies {
     // PostgreSQL
     runtimeOnly("org.postgresql:postgresql")
 
+    // Monitoreo (Actuator & Prometheus)
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

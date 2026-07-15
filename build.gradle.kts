@@ -45,6 +45,7 @@ dependencies {
     // Monitoreo (Actuator & Prometheus)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("io.micrometer:micrometer-registry-otlp")
 
 
     compileOnly("org.projectlombok:lombok")
